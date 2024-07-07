@@ -4,26 +4,15 @@ include 'config.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $type = $_POST['type'];
     $title = $_POST['title'];
+    $username = base64_decode($_COOKIE['username']);
     $content = $_POST['content'];
 
-    $sql = "INSERT INTO inquiries (type, title, content) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO inquiries (type, title, content, username) VALUES (?, ?, ?, ?)";
     $stmt = $pdo->prepare($sql);
-    if ($stmt->execute([$type, $title, $content])) {
-        echo "Inquiry submitted successfully";
+    if ($stmt->execute([$type, $title, $content,$username])) {
+        echo '<script>window.location.href="index.php";</script>';
     } else {
-        echo "Failed to submit inquiry";
+        echo '<script>alert("문의 게시를 실패했습니다. 다시 시도해주세요. 문제가 계속될 경우 관리자에게 문의하세요.");</script>';
     }
 }
 ?>
-
-<form method="post">
-    <select name="type" required>
-        <option value="">문의 유형 선택</option>
-        <option value="academic">학사 관련</option>
-        <option value="facility">시설 관련</option>
-        <option value="other">기타</option>
-    </select>
-    <input type="text" name="title" placeholder="제목" required>
-    <textarea name="content" placeholder="내용을 입력해주세요" required></textarea>
-    <button type="submit">제출</button>
-</form>
